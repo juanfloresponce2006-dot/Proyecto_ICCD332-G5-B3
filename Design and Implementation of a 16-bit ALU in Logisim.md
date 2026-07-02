@@ -68,3 +68,4 @@ This can be done with the hardware shown below:
 - 2 Splitters (16-bit wide) to unpack and repack the data buses
 - 16 AdderSubtractor_1bit
 
+Traduce tal cual al español 
