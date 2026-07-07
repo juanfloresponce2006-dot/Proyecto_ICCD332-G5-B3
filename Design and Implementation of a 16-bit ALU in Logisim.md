@@ -89,3 +89,34 @@ Esto se implementa con el hardware que se detalla a continuación:
 - 3 Divisores (*Splitters* de 16 bits de ancho) para desempaquetar el bus principal y volver a empaquetar los dos buses desplazados.
 - 2 Constantes de 1 bit (Valor `0x0`) para rellenar las posiciones de bits vacías.
 - 1 Multiplexor (Ancho de datos de 16 bits, 1 bit de selección, Habilitación desactivada) para elegir la ruta de la operación.
+## iii) Unidad Lógica de 16 bits (Operaciones Booleanas)
+
+### Unidad_Logica_16bit
+
+Mientras que la unidad aritmética procesa los bits como valores numéricos, la unidad lógica trata cada bit de forma independiente como un interruptor booleano (Verdadero/Falso). Esta unidad es fundamental para realizar operaciones de enmascaramiento de bits (*masking*), comprobación de condiciones y manipulación de datos a bajo nivel en la arquitectura del procesador.
+
+El diseño implementa las cuatro compuertas lógicas fundamentales operando en paralelo sobre buses de 16 bits. Dado que Logisim soporta el procesamiento de múltiples bits de forma nativa en sus compuertas, no es necesario separar los cables individualmente, lo que reduce la latencia teórica del circuito. Un multiplexor actúa como selector de ruta para determinar qué resultado lógico se envía al bus principal.
+
+Para resolver esto, la `Unidad_Logica_16bit` realiza las siguientes operaciones bit a bit simultáneamente:
+
+- `Resultado_AND = A AND B` (Utilizado para apagar bits específicos).
+- `Resultado_OR = A OR B` (Utilizado para encender bits específicos).
+- `Resultado_XOR = A XOR B` (Utilizado para comparar igualdad o invertir condicionalmente).
+- `Resultado_NOT = NOT A` (Utilizado para la inversión total de los estados de la entrada A).
+
+El control de la unidad se define mediante la señal de 2 bits `Sel_Logico`:
+- `00`: Salida = AND
+- `01`: Salida = OR
+- `10`: Salida = XOR
+- `11`: Salida = NOT
+
+Esto se implementa con el hardware que se detalla a continuación:
+
+- 2 pines de entrada de 16 bits (`A`, `B`)
+- 1 pin de entrada de 2 bits (`Sel_Logico`)
+- 1 pin de salida de 16 bits (`Out_Logico`)
+- 1 compuerta AND (16 bits)
+- 1 compuerta OR (16 bits)
+- 1 compuerta XOR (16 bits)
+- 1 compuerta NOT (16 bits)
+- 1 Multiplexor (Ancho de datos de 16 bits, 2 bits de selección)
