@@ -68,3 +68,25 @@ This can be done with the hardware shown below:
 - 2 Splitters (16-bit wide) to unpack and repack the data buses
 - 16 AdderSubtractor_1bit
 
+  ## ii) Unidad de Desplazamiento de 16 bits (Shifter)
+
+### Unidad_Desplazamiento_16bit
+
+Desplazar bits hacia la izquierda o hacia la derecha dentro de un número binario es el equivalente en hardware de multiplicar o dividir por potencias de 2. En un desplazamiento lógico de una posición, cada bit se mueve a un índice adyacente. El bit que cae por el borde del registro se descarta permanentemente, y la nueva posición vacía se rellena con una constante cero.
+
+En lugar de utilizar compuertas lógicas activas complejas, un desplazamiento fijo de 1 bit se puede implementar en su totalidad mediante el enrutamiento físico de cables. Al desempaquetar el bus de entrada de 16 bits en cables individuales utilizando divisores (*splitters*), el sistema puede reasignar físicamente las líneas de datos para lograr el desplazamiento de forma instantánea, sin retardo de propagación. Luego, se utiliza un multiplexor para que actúe como árbitro, seleccionando qué ruta cableada (Izquierda o Derecha) se envía a la salida final en función de una señal de control.
+
+Para resolver esto, la `Unidad_Desplazamiento_16bit` realiza las siguientes operaciones de enrutamiento:
+
+- **Cuando `Sel_Shift = 0` (Desplazamiento Lógico a la Izquierda - SHL):** Cada bit de entrada se mueve una posición hacia arriba (`Result[i+1] = A[i]`). El bit menos significativo se rellena con un cero lógico (`Result[0] = 0`), y el bit original `A[15]` se descarta.
+- **Cuando `Sel_Shift = 1` (Desplazamiento Lógico a la Derecha - SHR):** Cada bit de entrada se mueve una posición hacia abajo (`Result[i-1] = A[i]`). El bit más significativo se rellena con un cero lógico (`Result[15] = 0`), y el bit original `A[0]` se descarta.
+
+Esto se implementa con el hardware que se detalla a continuación:
+
+- 1 pin de entrada de 16 bits (`A`)
+- 1 pin de entrada de 1 bit (`Sel_Shift`)
+- 1 pin de salida de 16 bits (`Out_Shift`)
+- 3 Divisores (*Splitters* de 16 bits de ancho) para desempaquetar el bus principal y volver a empaquetar los dos buses desplazados.
+- 2 Constantes de 1 bit (Valor `0x0`) para rellenar las posiciones de bits vacías.
+- 1 Multiplexor (Ancho de datos de 16 bits, 1 bit de selección, Habilitación desactivada) para elegir la ruta de la operación.
+
